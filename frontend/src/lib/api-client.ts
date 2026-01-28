@@ -94,7 +94,7 @@ class ApiClient {
     }
 
     this.refreshPromise = axios
-      .post<{ access: string }>(`${API_URL}/api/users/token/refresh/`, {
+      .post<{ access: string }>(`${API_URL}/api/auth/token/refresh/`, {
         refresh: refreshToken,
       })
       .then((response) => {

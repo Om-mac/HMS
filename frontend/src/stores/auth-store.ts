@@ -28,11 +28,11 @@ export const useAuthStore = create<AuthState>()(
       login: async (credentials: LoginCredentials) => {
         set({ isLoading: true, error: null });
         try {
-          const tokens = await apiClient.post<AuthTokens>('/api/users/token/', credentials);
+          const tokens = await apiClient.post<AuthTokens>('/api/auth/login/', credentials);
           apiClient.setTokens(tokens);
           
           // Fetch user data
-          const user = await apiClient.get<User>('/api/users/me/');
+          const user = await apiClient.get<User>('/api/auth/profile/');
           set({ user, isAuthenticated: true, isLoading: false });
         } catch (error: any) {
           const message = error.response?.data?.detail || 'Login failed. Please check your credentials.';
@@ -44,7 +44,7 @@ export const useAuthStore = create<AuthState>()(
       register: async (data: RegisterData) => {
         set({ isLoading: true, error: null });
         try {
-          await apiClient.post('/api/users/register/', data);
+          await apiClient.post('/api/auth/register/', data);
           
           // Auto-login after registration
           await get().login({ email: data.email, password: data.password });
@@ -63,7 +63,7 @@ export const useAuthStore = create<AuthState>()(
       fetchUser: async () => {
         set({ isLoading: true });
         try {
-          const user = await apiClient.get<User>('/api/users/me/');
+          const user = await apiClient.get<User>('/api/auth/profile/');
           set({ user, isAuthenticated: true, isLoading: false });
         } catch (error) {
           set({ user: null, isAuthenticated: false, isLoading: false });

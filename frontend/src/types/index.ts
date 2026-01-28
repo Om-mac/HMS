@@ -31,7 +31,8 @@ export interface RegisterData {
   first_name: string;
   last_name: string;
   phone_number: string;
-  role: 'doctor' | 'patient';
+  user_type: "doctor" | "patient";
+  password_confirm?: string;
 }
 
 // Patient types
