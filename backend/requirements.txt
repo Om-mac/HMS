@@ -1,0 +1,49 @@
+# Django Core
+Django==5.1
+djangorestframework==3.15.2
+django-cors-headers==4.4.0
+django-filter==24.3
+
+# Database
+psycopg2-binary==2.9.9
+django-environ==0.11.2
+
+# Authentication & Security
+djangorestframework-simplejwt==5.3.1
+django-cryptography==1.1
+pycryptodome==3.21.0
+cryptography==43.0.0
+
+# Task Queue
+celery==5.4.0
+redis==5.0.8
+django-celery-beat==2.6.0
+django-celery-results==2.5.1
+
+# AWS
+boto3==1.35.0
+django-storages==1.14.4
+
+# WhatsApp Integration
+twilio==9.2.3
+requests==2.32.3
+
+# QR Code Generation
+qrcode[pil]==7.4.2
+Pillow==10.4.0
+
+# API Documentation
+drf-spectacular==0.27.2
+
+# Utilities
+python-dateutil==2.9.0
+django-extensions==3.2.3
+
+# Testing
+pytest==8.3.2
+pytest-django==4.8.0
+factory-boy==3.3.1
+
+# Production
+gunicorn==23.0.0
+whitenoise==6.7.0
