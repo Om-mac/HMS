@@ -44,12 +44,31 @@ export const useAuthStore = create<AuthState>()(
       register: async (data: RegisterData) => {
         set({ isLoading: true, error: null });
         try {
-          await apiClient.post('/api/auth/register/', data);
+          const response = await apiClient.post<{ tokens: AuthTokens; user: User }>('/api/auth/register/', data);
           
-          // Auto-login after registration
-          await get().login({ email: data.email, password: data.password });
+          // Set tokens from registration response
+          apiClient.setTokens(response.tokens);
+          set({ user: response.user, isAuthenticated: true, isLoading: false });
         } catch (error: any) {
-          const message = error.response?.data?.detail || 'Registration failed. Please try again.';
+          const errorData = error.response?.data;
+          let message = 'Registration failed. Please try again.';
+          
+          if (errorData) {
+            if (typeof errorData === 'string') {
+              message = errorData;
+            } else if (errorData.detail) {
+              message = errorData.detail;
+            } else if (errorData.email) {
+              message = Array.isArray(errorData.email) ? errorData.email[0] : errorData.email;
+            } else if (errorData.password) {
+              message = Array.isArray(errorData.password) ? errorData.password[0] : errorData.password;
+            } else if (errorData.phone_number) {
+              message = Array.isArray(errorData.phone_number) ? errorData.phone_number[0] : errorData.phone_number;
+            } else if (errorData.non_field_errors) {
+              message = Array.isArray(errorData.non_field_errors) ? errorData.non_field_errors[0] : errorData.non_field_errors;
+            }
+          }
+          
           set({ error: message, isLoading: false });
           throw error;
         }

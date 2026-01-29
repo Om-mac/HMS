@@ -58,8 +58,14 @@ export default function RegisterPage() {
       await registerUser(registerData);
       toast.success("Account created successfully!");
       router.push("/dashboard");
-    } catch {
-      toast.error(error || "Registration failed. Please try again.");
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.detail 
+        || err.response?.data?.email?.[0]
+        || err.response?.data?.password?.[0]
+        || err.response?.data?.phone_number?.[0]
+        || (typeof err.response?.data === 'string' ? err.response?.data : null)
+        || "Registration failed. Please try again.";
+      toast.error(errorMessage);
     }
   };
 

@@ -1,0 +1,108 @@
+# HMS - Healthcare Management System
+# Render Blueprint for automatic deployment
+# https://render.com/docs/blueprint-spec
+
+services:
+  # Backend Django API
+  - type: web
+    name: hms-backend
+    runtime: python
+    region: singapore  # Closest to India
+    plan: starter
+    buildCommand: |
+      cd backend && 
+      pip install -r requirements.txt &&
+      python manage.py collectstatic --noinput
+    startCommand: cd backend && gunicorn hms.wsgi:application --bind 0.0.0.0:$PORT --workers 2
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.0"
+      - key: DEBUG
+        value: "False"
+      - key: DJANGO_SETTINGS_MODULE
+        value: hms.settings
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com,vakverse.com,www.vakverse.com"
+      - key: CORS_ALLOWED_ORIGINS
+        value: "https://hms-frontend.onrender.com,https://vakverse.com,https://www.vakverse.com"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: AES_ENCRYPTION_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: hms-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: hms-redis
+          type: redis
+          property: connectionString
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: AWS_STORAGE_BUCKET_NAME
+        sync: false
+      - key: WHATSAPP_API_KEY
+        sync: false
+      - key: WHATSAPP_PHONE_NUMBER_ID
+        sync: false
+    healthCheckPath: /api/health/
+
+  # Frontend Next.js
+  - type: web
+    name: hms-frontend
+    runtime: node
+    region: singapore
+    plan: starter
+    buildCommand: cd frontend && npm install && npm run build
+    startCommand: cd frontend && npm start
+    envVars:
+      - key: NODE_VERSION
+        value: "20.10.0"
+      - key: NEXT_PUBLIC_API_URL
+        value: "https://hms-backend.onrender.com"
+
+  # Celery Worker (for background tasks)
+  - type: worker
+    name: hms-celery
+    runtime: python
+    region: singapore
+    plan: starter
+    buildCommand: cd backend && pip install -r requirements.txt
+    startCommand: cd backend && celery -A hms worker --loglevel=info
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.0"
+      - key: DJANGO_SETTINGS_MODULE
+        value: hms.settings
+      - key: SECRET_KEY
+        fromService:
+          name: hms-backend
+          type: web
+          envVarKey: SECRET_KEY
+      - key: DATABASE_URL
+        fromDatabase:
+          name: hms-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: hms-redis
+          type: redis
+          property: connectionString
+
+  # Redis for Celery
+  - type: redis
+    name: hms-redis
+    region: singapore
+    plan: starter
+    ipAllowList: []
+
+# PostgreSQL Database
+databases:
+  - name: hms-db
+    region: singapore
+    plan: starter
+    databaseName: hms_db
+    user: hms_admin
