@@ -13,7 +13,7 @@ class DoctorAdmin(admin.ModelAdmin):
     list_display = ['get_full_name', 'registration_number', 'experience_years', 'average_rating', 'is_accepting_patients']
     list_filter = ['is_accepting_patients', 'specializations']
     search_fields = ['user__first_name', 'user__last_name', 'registration_number']
-    filter_horizontal = ['specializations', 'clinics']
+    filter_horizontal = ['specializations']
     
     def get_full_name(self, obj):
         return f"Dr. {obj.user.full_name}"
