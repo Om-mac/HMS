@@ -33,6 +33,9 @@ const mockStats = {
   },
 };
 
+type DoctorStats = typeof mockStats.doctor;
+type PatientStats = typeof mockStats.patient;
+
 const mockUpcomingAppointments = [
   {
     id: "1",
@@ -69,7 +72,8 @@ const mockRecentPatients = [
 export default function DashboardPage() {
   const { user } = useAuthStore();
   const isDoctor = user?.role === "doctor";
-  const stats = isDoctor ? mockStats.doctor : mockStats.patient;
+  const doctorStats = mockStats.doctor;
+  const patientStats = mockStats.patient;
 
   return (
     <div className="space-y-6">
@@ -114,7 +118,7 @@ export default function DashboardPage() {
               <Calendar className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.todayAppointments}</div>
+              <div className="text-2xl font-bold">{doctorStats.todayAppointments}</div>
               <p className="text-xs text-muted-foreground">
                 +2 from yesterday
               </p>
@@ -126,7 +130,7 @@ export default function DashboardPage() {
               <Clock className="h-4 w-4 text-yellow-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.pendingAppointments}</div>
+              <div className="text-2xl font-bold">{doctorStats.pendingAppointments}</div>
               <p className="text-xs text-muted-foreground">
                 Awaiting confirmation
               </p>
@@ -138,7 +142,7 @@ export default function DashboardPage() {
               <CheckCircle className="h-4 w-4 text-green-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.completedToday}</div>
+              <div className="text-2xl font-bold">{doctorStats.completedToday}</div>
               <p className="text-xs text-muted-foreground">
                 Today&apos;s consultations
               </p>
@@ -150,7 +154,7 @@ export default function DashboardPage() {
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.totalPatients}</div>
+              <div className="text-2xl font-bold">{doctorStats.totalPatients}</div>
               <p className="text-xs text-muted-foreground flex items-center gap-1">
                 <TrendingUp className="h-3 w-3 text-green-500" />
                 +12 this month
@@ -163,7 +167,7 @@ export default function DashboardPage() {
               <Activity className="h-4 w-4" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.waitingQueue}</div>
+              <div className="text-2xl font-bold">{doctorStats.waitingQueue}</div>
               <p className="text-xs opacity-80">
                 Patients waiting
               </p>
@@ -178,7 +182,7 @@ export default function DashboardPage() {
               <Calendar className="h-4 w-4 text-primary" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.upcomingAppointments}</div>
+              <div className="text-2xl font-bold">{patientStats.upcomingAppointments}</div>
               <p className="text-xs text-muted-foreground">
                 Scheduled appointments
               </p>
@@ -190,7 +194,7 @@ export default function DashboardPage() {
               <CheckCircle className="h-4 w-4 text-green-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.completedVisits}</div>
+              <div className="text-2xl font-bold">{patientStats.completedVisits}</div>
               <p className="text-xs text-muted-foreground">
                 Total consultations
               </p>
@@ -202,7 +206,7 @@ export default function DashboardPage() {
               <Activity className="h-4 w-4 text-purple-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.activePrescriptions}</div>
+              <div className="text-2xl font-bold">{patientStats.activePrescriptions}</div>
               <p className="text-xs text-muted-foreground">
                 Current medications
               </p>
@@ -214,7 +218,7 @@ export default function DashboardPage() {
               <AlertCircle className="h-4 w-4 text-yellow-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.pendingReports}</div>
+              <div className="text-2xl font-bold">{patientStats.pendingReports}</div>
               <p className="text-xs text-muted-foreground">
                 Awaiting results
               </p>
